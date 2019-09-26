@@ -1,5 +1,4 @@
 /* EE422C Assignment #2 submission by
- * Replace <...> with your actual data. 
- * <Student Name>
- * <Student EID>
+ * <Rithvik Baddam>
+ * <UT EID: rrb2442>
  */

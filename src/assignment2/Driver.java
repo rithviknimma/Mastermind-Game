@@ -1,3 +1,8 @@
+/* EE422C Assignment #2 submission by
+ * <Rithvik Baddam>
+ * <UT EID: rrb2442>
+ */
+
 package assignment2;
 import java.util.Scanner;
 
@@ -6,17 +11,18 @@ public class Driver {
 	public static boolean GAMEPLAY;
 	
 	public static void main(String[] args) {
-		Game game = new Game();
+		boolean testmode = false; // default game mode
+		boolean validGuess;
 		
-		System.out.print(Game.INTRO);
-		
-		game.setTestMode(true); // set this to false later
-		
-		// sets test mode
+		// sets test mode if user specifies
 		if(args.length >= 1 && args[0].equals("1")) {
-			game.setTestMode(true);
+			testmode = true;
 			System.out.println("TEST MODE.");
 		}
+		
+		// construct game and print intro
+		Game game = new Game(testmode);
+		game.printIntro();
 		
 		Scanner sc = new Scanner(System.in); // scanner initialization
 		
@@ -28,13 +34,21 @@ public class Driver {
 			System.out.print("\nGenerating secret code ...");
 			
 			if(game.getTestMode() == true)
-				System.out.println("(for this example the secret code is "+ game.getSecretCode() +")\n");
+				System.out.println("(TEST MODE ENABLED. Secret code is "+ game.getSecretCode() +")\n");
 			else
-				System.out.println();
+				System.out.println("\n");
 			
-			while(game.getGuessNumber() > 0 && game.getGameStatus() == false){ // keep playing until player runs out of guesses or has won
-				game.nextGuess(sc);
+			while(game.getGuessNumber() > 0 && game.getGameStatus() == false){ // keep playing until player runs out of guesses or hasn't won yet             
+				validGuess = game.getGameBoard().nextGuess(sc, game);
+				
+				if(validGuess) { // if it's a valid guess, calculate and print pegs
+					game.getPegs().calculatePegs(game.getCurrentGuess(), game.getSecretCode(), game);
+					game.getPegs().printPegs(game.getCurrentGuess(), game);
+				}
 			}
+			
+			if(game.getGameStatus() == false) // if player lost the game
+				System.out.println("Sorry, you are out of guesses. You lose, boo-hoo.");
 			
 			// restarts game if user wants to keep playing
 			System.out.print("Are you ready for another game (Y/N) : ");

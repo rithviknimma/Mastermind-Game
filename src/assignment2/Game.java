@@ -1,16 +1,24 @@
+/* EE422C Assignment #2 submission by
+ * <Rithvik Baddam>
+ * <UT EID: rrb2442>
+ */
+
 package assignment2;
 
-import java.util.Scanner;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 public class Game {
-	private static String secretCode;
-	private static int guessNumber;
-	private static int pegNumber;
-	private static boolean GAMEWON;
-	private static boolean TESTMODE;
+	private String secretCode;
+	private String currentGuess;
+	private int guessNumber;
+	private boolean GAMEWON;
+	private boolean TESTMODE;
+	private Pegs pegs;
+	private GameBoard gameboard;
+	private ArrayList<String> history;
 	
-	public static final String INTRO = "Welcome to Mastermind.  Here are the rules.\n"
+	
+	private static final String INTRO = "Welcome to Mastermind.  Here are the rules.\n"
 			+ "\nThis is a text version of the classic board game Mastermind.\n"
 			+ "\nThe  computer  will  think  of  a  secret  code.  The  code  consists  of  4\n"
 			+ "colored  pegs.The  pegs  MUST  be  one  of  six  colors:  blue,  green,\n"
@@ -29,127 +37,93 @@ public class Game {
 			+ "\nYou have 12 guesses to figure out the secret code or you lose the\n"
 			+ "game.  Are you ready to play? (Y/N):  ";
 	
-	public Game(){
+	public Game(boolean testmode){
 		secretCode = SecretCodeGenerator.getInstance().getNewSecretCode();
 		guessNumber = GameConfiguration.guessNumber;
-		pegNumber = GameConfiguration.pegNumber;
+		pegs = new Pegs();
+		gameboard = new GameBoard();
 		GAMEWON = false;
+		history = new ArrayList<String>();
+		TESTMODE = testmode;
 	}
 	
 	public void restartGame(){
 		secretCode = SecretCodeGenerator.getInstance().getNewSecretCode();
 		guessNumber = GameConfiguration.guessNumber;
-		pegNumber = GameConfiguration.pegNumber;
+		pegs = new Pegs();
+		gameboard = new GameBoard();
 		GAMEWON = false;
+		history = new ArrayList<String>();
 	}
 	
-	// prints number of guesses left and rest of the words
-	public void nextGuess(Scanner sc){
-		String guess;
-		boolean validGuess = false;
-		
-		// prints number of guesses left
-		System.out.print("You have " + guessNumber);
-		if(guessNumber == 1)
-			System.out.println(" guess left.");
-		else 
-			System.out.println(" guesses left.");
-		
-		// keeps asking for input until user inputs valid guess
-		while(validGuess != true){
-			System.out.println("What is your next guess?");
-			System.out.println("Type in the characters for your guess and press enter.");
-			System.out.print("Enter guess: ");
-			guess = sc.nextLine();
-			
-			if(checkIfValid(guess)){  // only if valid 
-				getPegs(guess);
-				validGuess = true;
-				guessNumber--;
-			}
-			else {
-				System.out.println("  -> INVALID GUESS\n");
-			}
-			
-			System.out.println();
-		}
+	// asks user for a guess and decides whether it's a valid guess
+//	public boolean nextGuess(Scanner sc){
+//		String guess;
+//		boolean validGuess = false;
+//		
+//		// prints number of guesses left
+//		System.out.print("You have " + guessNumber);
+//		if(guessNumber == 1)
+//			System.out.println(" guess left.");
+//		else 
+//			System.out.println(" guesses left.");
+//		
+//		// keeps asking for input until user inputs valid guess
+//		while(validGuess != true){
+//			System.out.println("What is your next guess?");
+//			System.out.println("Type in the characters for your guess and press enter.");
+//			System.out.print("Enter guess: ");
+//			guess = sc.nextLine();
+//
+//			if(guess.equals("HISTORY")) {
+//				printHistory();
+//			}
+//			else if(checkIfValid(guess)){  // only if valid 
+//				//getPegs(guess);
+//				currentGuess = guess;
+//				validGuess = true;
+//				guessNumber--;
+//			}
+//			else {
+//				System.out.println("  -> INVALID GUESS\n");
+//			}
+//		}
+//		
+//		return validGuess;
+//	}
+//	
+//	// checks if user input guess is valid
+//	public boolean checkIfValid(String guess){
+//		
+//		// if length of guess not equal to secretCode, invalid guess 
+//		if(guess.length() != secretCode.length()) 
+//			return false;
+//		
+//		String[] guessArray = guess.split(""); // splits user guess into string array to compare with colors array
+//		boolean containsGuessColor;
+//		
+//		// check if guess contains valid color values
+//		for(String a : guessArray) {
+//			containsGuessColor = Arrays.stream(GameConfiguration.colors).anyMatch(a::equals); // compares each guess letter to see if it is a valid color
+//			if(containsGuessColor == false)
+//				return false;
+//		}
+//		
+//		return true; // if guess passes length and valid colors test, its a valid guess
+//	}
+
+	// prints game intro
+	public void printIntro() {
+		System.out.print(INTRO);
 	}
 	
-	// checks if user input guess is valid
-	public static boolean checkIfValid(String guess){
-		
-		// if length of guess not equal to secretCode, invalid guess 
-		if(guess.length() != secretCode.length()) 
-			return false;
-		
-		String[] guessArray = guess.split(""); // splits user guess into string array to compare with colors array
-		boolean containsGuessColor;
-		
-		// check if guess contains valid color values
-		for(String a : guessArray) {
-			containsGuessColor = Arrays.stream(GameConfiguration.colors).anyMatch(a::equals); // compares each guess letter to see if it is a valid color
-			if(containsGuessColor == false)
-				return false;
+	// prints history when user asks for it
+	public void printHistory() {
+		System.out.println();
+		for(String a : history){
+			System.out.println(a);
 		}
-		
-		return true; // if guess passes length and valid colors test, its a valid guess
-	}
-	
-	public void getPegs(String guess){
-		int blackPegs = 0;
-		int whitePegs = 0;
-		
-		if(guess.equals(secretCode)) {
-			System.out.println("\n"+ guess + " -> Result:  4 black pegs - You win !!");
-			GAMEWON = true;
-		}
-		else {
-			String[] guessArray = guess.split("");
-			String[] secretCodeArray = secretCode.split("");
-			boolean guessContainsCodeColor;
-			
-			for(int i = 0; i < guess.length(); i++){
-				if(guessArray[i].equals(secretCodeArray[i])){
-					blackPegs++;
-				}
-				else {
-					guessContainsCodeColor = Arrays.stream(secretCodeArray).anyMatch(guessArray[i]::equals); // check if guess contains a color from secret code
-					if(guessContainsCodeColor){
-						whitePegs++;
-					}
-				}
-			}
-			printPegs(blackPegs, whitePegs, guess);
-		}
-	}
-	
-	// prints
-	public void printPegs(int blackPegs, int whitePegs, String guess){
-		System.out.print("\n"+ guess + " -> Result:  " );
-		if(blackPegs != 0 || whitePegs != 0){
-			if(blackPegs > 0) {
-				if(blackPegs == 1)
-					System.out.print(blackPegs + " black peg");
-				else
-					System.out.print(blackPegs + " black pegs");
-			}
-			if(whitePegs > 0) {
-				if(blackPegs > 0)
-					System.out.print(", and ");
-				if(whitePegs == 1)
-					System.out.print(whitePegs + " white peg");
-				else
-					System.out.print(whitePegs + " white pegs");
-			}
-			System.out.println();
-		}
-		else if(blackPegs == 0 && whitePegs == 0){
-			System.out.println("No Pegs");
-		}
-	}
-	
-	public void setTestMode(boolean set){
-		TESTMODE = set;
+		System.out.println();
 	}
 	
 	public boolean getTestMode(){
@@ -158,6 +132,10 @@ public class Game {
 	
 	public boolean getGameStatus(){
 		return GAMEWON;
+	}
+	
+	public void setGameStatus(boolean setGameStatus){
+		GAMEWON = setGameStatus;
 	}
 	
 	public String getSecretCode() {
@@ -173,7 +151,24 @@ public class Game {
 		return guessNumber;
 	}
 	
-	public int getPegNumber() {
-		return pegNumber;
+	public ArrayList<String> getHistory(){
+		return history;
 	}
+	
+	public void setCurrentGuess(String guess) {
+		currentGuess = guess;
+	}
+	
+	public String getCurrentGuess() {
+		return currentGuess;
+	}
+	
+	public Pegs getPegs() {
+		return pegs;
+	}
+	
+	public GameBoard getGameBoard() {
+		return gameboard;
+	}
+	
 }
