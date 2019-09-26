@@ -45,7 +45,7 @@ public class Pegs {
 				blackPeg++;
 			}
 			else { // if color if not a black peg, record it to check if it is white
-				if(guessArrayColors.contains(guessArray[i]) == false)
+				//if(guessArrayColors.contains(guessArray[i]) == false)
 					guessArrayColors.add(guessArray[i]);
 					
 				secretCodeArrayColors.add(secretCodeArray[i]);

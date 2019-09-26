@@ -14,6 +14,9 @@ public class GameBoard {
 	public GameBoard() {
 		guessNumber = GameConfiguration.guessNumber;
 	}
+	public int getGuessNumber() {
+		return guessNumber;
+	}
 	// asks user for a guess and decides whether it's a valid guess
 	public boolean nextGuess(Scanner sc, Game game){
 		String guess;

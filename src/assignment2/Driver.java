@@ -38,7 +38,7 @@ public class Driver {
 			else
 				System.out.println("\n");
 			
-			while(game.getGuessNumber() > 0 && game.getGameStatus() == false){ // keep playing until player runs out of guesses or hasn't won yet             
+			while(game.getGameBoard().getGuessNumber() > 0 && game.getGameStatus() == false){ // keep playing until player runs out of guesses or hasn't won yet             
 				validGuess = game.getGameBoard().nextGuess(sc, game);
 				
 				if(validGuess) { // if it's a valid guess, calculate and print pegs
