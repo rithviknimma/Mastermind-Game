@@ -48,7 +48,7 @@ public class Driver {
 			}
 			
 			if(game.getGameStatus() == false) // if player lost the game
-				System.out.println("Sorry, you are out of guesses. You lose, boo-hoo.");
+				System.out.println("Sorry, you are out of guesses. You lose, boo-hoo.\n");
 			
 			// restarts game if user wants to keep playing
 			System.out.print("Are you ready for another game (Y/N) : ");
