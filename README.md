@@ -22,7 +22,6 @@ What is your next guess?
 Type in the characters for your guess and press enter. Enter guess: oooo -> INVALID GUESS
 What is your next guess?
 Type in the characters for your guess and press enter. Enter guess: kkkk -> INVALID GUESS
- 
 What is your next guess?
 Type in the characters for your guess and press enter. Enter guess: RRRRR -> INVALID GUESS
 What is your next guess?
